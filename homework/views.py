@@ -38,7 +38,7 @@ def painel(request):
                 "bet": int(bet_min),
                 "currency": currency,
             }
-            req = requests.post(url="http://127.0.0.1:5000/double/start", json=data)
+            req = requests.post(url="http://vps54611.publiccloud.com.br:5000/double/start", json=data)
             status_code = req.status_code
             print(status_code)
         else:
