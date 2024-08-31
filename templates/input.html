@@ -1,0 +1,10 @@
+<!-- templates/components/input.html -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% if size == 'mid' %}
+<input type="{{ type }}" name="{{ name }}" value="{{ value }}" class="input-mid" placeholder="{{ placeholder }}" min="0.01" step="0.01">
+{% elif size == "larger" %}
+<input type="{{ type }}" name="{{ name }}" value="{{ value }}" class="{{ class }}" placeholder="{{ placeholder }}" min="0.02" step="0.01">
+{% elif size == "number-larger" %}
+<input type="{{ type }}" name="{{ name }}" value="0.01" class="{{ class }}" placeholder="{{ placeholder }}" min="0.01" step="0.01">
+{% endif %}

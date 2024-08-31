@@ -1,0 +1,17 @@
+<!-- templates/components/button.html -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+
+{% if size == 'small' %}
+<button type="{{ type }}" class="small-button">{{ text }}</button>
+{% elif size == 'mid' %}
+<button type="{{ type }}"  class="mid-button">{{ text }}</button>
+{% elif size == 'big' %}
+<button type="{{ type }}"  class="big-button">{{ text }}</button>
+{% elif size == "larger" %}
+<button type="{{ type }}"  class="larger-button">{{ text }}</button>
+{% elif size == "larger-green" %}
+<button type="{{ type }}" class="larger-green">{{ text }}</button>
+{% endif %}

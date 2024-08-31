@@ -1,0 +1,138 @@
+/** BUTTON STYLES **/
+
+.small-button,
+.mid-button,
+.larger-button,
+.larger-green,
+#stop-button,
+.big-button {
+    border-radius: 5px;
+    border: none;
+    font-size: 15px;
+    transition: background-color 300ms, box-shadow 300ms;
+    cursor: pointer;
+}
+
+.small-button {
+    background-color: #3a91f6;
+    color: white;
+    padding: 10px 20px;
+}
+
+.mid-button {
+    background-color: #3a91f6;
+    color: white;
+    padding: 10px 20px;
+}
+
+.larger-button {
+    background-color: #3a91f6;
+    color: white;
+    padding: 15px 25px;
+}
+
+.larger-green {
+    background-color: #63e032;
+    color: white;
+    padding: 15px 25px;
+    max-width: 30%;
+}
+
+#stop-button {
+    background-color: #f63a3a;
+    color: white;
+    padding: 15px 25px;
+}
+
+.big-button {
+    background-color: #3a91f6;
+    color: white;
+    padding: 15px 25px;
+}
+
+.small-button:hover,
+.mid-button:hover,
+.larger-button:hover,
+.larger-green:hover,
+#stop-button:hover,
+.big-button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #2e7bc1;
+}
+
+
+
+#stop-button:hover {
+    background-color: #e03030;
+}
+
+/** INPUT STYLES **/
+
+input {
+    border-radius: 5px;
+    padding: 10px;
+    width: calc(80% - 20px); /* Adjust width to account for padding */
+    background-color: #0e1621;
+    color: white;
+    border: 1px solid #3a91f6;
+    transition: border-color 300ms, box-shadow 300ms;
+    height: 30px;
+    font-size: 17px;
+}
+.input-mid{
+    border-radius: 5px;
+    padding: 10px;
+    width: calc(40% - 20px); /* Adjust width to account for padding */
+    background-color: #0e1621;
+    color: white;
+    border: 1px solid #3a91f6;
+    transition: border-color 300ms, box-shadow 300ms;
+    height: 30px;
+}
+
+.input-mid:focus {
+    outline: none;
+    border-color: #63e032;
+    box-shadow: 0 0 5px rgba(99, 224, 50, 0.5);
+}
+
+input:focus {
+    outline: none;
+    border-color: #63e032;
+    box-shadow: 0 0 5px rgba(99, 224, 50, 0.5);
+}
+
+/** FORM STYLES **/
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+/** HEADING STYLES **/
+
+h1 {
+    color: #3a661d;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/** LABEL STYLES **/
+
+label {
+    font-size: 15px;
+    color: #fff;
+}
+
+/** PARAGRAPH STYLES **/
+
+p {
+    margin: 5px 0;
+    font-size: 15px;
+    color: #fff;
+}
+
+h5{
+    margin: 10px;
+}

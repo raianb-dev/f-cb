@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - Chillbet</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/painel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/index.js' %}"></script>
+</head>
+<body>
+<nav>
+    <center>
+        <br>
+        <img src="{% static 'img/logo.png' %}" alt="Chillbet Logo">
+    </center>
+</nav>
+<center>
+    <form id="start-form" action="{% url 'painel' %}" method="post">
+        {% csrf_token %}
+        <label>Autenticar com Chilbet.net</label><br><br>
+        <div class="login">
+            <p>Usuário | ID</p>{% include "input.html" with type="text" size="larger" name="email" value=email placeholder="Usuario#ID" %}<br>
+            <p>Password | Chillbet</p>{% include "input.html" with type="password" size="larger" name="password" value=password placeholder="Sua senha" %}<br>
+        </div>
+        
+        
+        <br>
+        
+        <center>
+            <p>Moeda: DEMO, BRL ou BTC</p>
+        <select id="dropdown" name="dropdown" class="dropdown-class">
+            {% for option in dropdown_options %}
+                <option value="{{ option.value }}" {% if option.value == currency %}selected{% endif %}>
+                    {{ option.label }}
+                </option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <p> Bet | Ammount </p>
+        {% include "input.html" with  size="mid"  name="bet_min" value=bet_min placeholder="Bet minima ex: 0.02 BRL.." %}<br>
+
+        </center>
+        <center>
+            <br>
+            {% if script_running %}
+            <button type="button" id="start-button" class="larger-red" style="display: none;">Iniciar</button>
+            <button type="button" id="stop-button" class="larger-green">Parar</button>
+        {% else %}
+            <button type="submit" id="start-button" class="larger-green">Iniciar</button>
+            <button type="button" id="stop-button" class="larger-red" style="display: none;">Parar</button>
+        {% endif %}
+        </center>
+
+    </form>
+</center>
+
+<script>
+    // Função para verificar se há cookies salvos e preencher os campos
+    function loadCookies() {
+        const emailField = document.querySelector('input[name="email"]');
+        const passwordField = document.querySelector('input[name="password"]');
+        const dropdownField = document.getElementById('dropdown');
+        const betMinField = document.querySelector('input[name="bet_min"]');
+        const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+
+        const savedEmail = getCookie('email');
+        const savedPassword = getCookie('password');
+        const savedCurrency = getCookie('currency');
+        const savedBetMin = parseFloat(getCookie('bet_min')).toFixed(2);
+        const scriptRunning = getCookie('script_running');
+
+        if (savedEmail) emailField.value = savedEmail;
+        if (savedPassword) passwordField.value = savedPassword;
+        if (savedCurrency) dropdownField.value = savedCurrency;
+        if (savedBetMin) betMinField.value = savedBetMin;
+
+        if (scriptRunning === 'true') {
+            startButton.style.display = 'none';
+            stopButton.style.display = 'block';
+        } else {
+            startButton.style.display = 'block';
+            stopButton.style.display = 'none';
+        }
+    }
+
+    // Função para salvar cookies com os campos preenchidos e estado do script
+    function saveCookies() {
+        const email = document.querySelector('input[name="email"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const currency = document.getElementById('dropdown').value;
+        const betMin = parseFloat(document.querySelector('input[name="bet_min"]').value).toFixed(2); // Converte para número e limita duas casas decimais
+    
+        setCookie('email', email);
+        setCookie('password', password);
+        setCookie('currency', currency);
+        setCookie('bet_min', betMin); // Salva o valor como número decimal com ponto
+        const scriptRunning = isScriptRunning() ? 'true' : 'false';
+        setCookie('script_running', scriptRunning);
+    }
+    
+    // Função auxiliar para verificar se o script está em execução
+    function isScriptRunning() {
+        const stopButton = document.getElementById('stop-button');
+        return stopButton.style.display === 'block';
+    }
+
+    // Funções auxiliares para cookies
+    function setCookie(name, value) {
+        document.cookie = `${name}=${value}; path=/`;
+    }
+
+    function getCookie(name) {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.split('=');
+            if (cookieName.trim() === name) {
+                return cookieValue;
+            }
+        }
+        return null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+
+    // Carregar cookies ao carregar a página
+    window.onload = function() {
+        loadCookies();
+    };
+
+    // Salvar cookies ao enviar o formulário
+    document.getElementById('start-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita o envio padrão do formulário
+        saveCookies();
+
+        // Inicia o script via fetch
+        const email = document.querySelector('input[name="email"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const currency = document.getElementById('dropdown').value;
+        const betMin = document.querySelector('input[name="bet_min"]').value;
+
+        fetch('http://127.0.0.1:5000/double/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bet: betMin, currency: currency, username: email, password: password }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao iniciar o script');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'started') {
+                alert('Script iniciado com sucesso!');
+                // Atualiza a interface
+                document.getElementById('start-button').style.display = 'none';
+                document.getElementById('stop-button').style.display = 'block';
+                setCookie('script_running', 'true');
+            } else {
+                alert('O script já está em execução.');
+            }
+        })
+        .catch((error) => {
+            console.error('Erro ao iniciar o script:', error);
+            alert('Erro ao iniciar o script: ' + error.message);
+        });
+    });
+
+    // Limpar cookies ao clicar em "Iniciar" novamente
+    document.getElementById('start-button').addEventListener('click', function() {
+        deleteCookie('script_running');
+        setCookie('script_running', 'true');
+        saveCookies();
+    });
+
+    function stopScript() {
+        const email = document.querySelector('input[name="email"]').value;
+        console.log('Email:', email); // Adiciona esta linha para imprimir o email no console
+        
+        fetch('http://127.0.0.1:5000/double/stop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: email }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao parar o script');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'stopped') {
+                alert('Script parado com sucesso!');
+                // Atualiza a interface
+                document.getElementById('start-button').style.display = 'block';
+                document.getElementById('stop-button').style.display = 'none';
+                setCookie('script_running', 'false');
+            } else {
+                alert('O script não estava em execução.');
+            }
+        })
+        .catch((error) => {
+            console.error('Erro ao parar o script:', error);
+            alert('Erro ao parar o script: ' + error.message);
+        });
+    }
+    
+    // Associar a função stopScript() ao botão "Parar Execução"
+    document.getElementById('stop-button').addEventListener('click', stopScript);
+
+</script>
+
+</body>
+</html>
